@@ -24,7 +24,7 @@ namespace DudelkaBot.Bot
     {
         private static Dictionary<string, TwitchBot> instances = new Dictionary<string, TwitchBot>();
         private static Listener Listener;
-        
+
         private Config.CTwitch config;
 
         public BotState State { get; private set; }
@@ -58,11 +58,14 @@ namespace DudelkaBot.Bot
             var bot = new TwitchBot(channel);
             instances.Add(channel, bot);
 
-            Console.WriteLine("Try join to channel '{0}'", channel);
+            Debug.WriteLine(string.Format("Try join to channel '{0}'", channel));
+            Listener.Print("JOIN #" + channel);
         }
 
         public void ResiveMessage(string user, string msg)
         {
+            Debug.WriteLine(string.Format("> [{2}][{0}]: {1}", user, msg, Channel));
+
             if (msg.StartsWith("!"))
             {
                 if (!CommandShell.Eval(this, user, msg.Substring(1, msg.Length - 1)))
@@ -70,9 +73,9 @@ namespace DudelkaBot.Bot
             }
         }
 
-        public void ResiveSystemMessage(string msg)
+        public void ConfirmJoin()
         {
-
+            State = BotState.Run;
         }
 
         public void Brodcast(string format, params object[] args)

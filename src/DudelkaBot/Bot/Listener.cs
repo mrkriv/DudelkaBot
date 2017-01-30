@@ -1,6 +1,7 @@
 ﻿using DudelkaBot.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -20,8 +21,8 @@ namespace DudelkaBot.Bot
 
     public class Listener
     {
-        private static Regex userParser = new Regex(@"@(?<username>[\w]+).tmi.twitch.tv (?<type>[A-Z]+) #(?<channel>\w+) :(?<msg>.*)");
-        private static Regex systemParser = new Regex(@"@(?<username>[\w]+).tmi.twitch.tv (?<type>[A-Z]+) #(?<channel>\w+) :(?<msg>.*)");
+        private static Regex userParser = new Regex(@"@(?<username>[\w]+).tmi.twitch.tv (?<type>[A-Z]+) #(?<channel>\w+) :\s*(?<msg>.*)");
+        private static Regex systemParser = new Regex(@"tmi\.twitch\.tv( \d{3} \w+ :)?\s*(?<msg>.+)");
         private const int messageLimitCount = 19;
         private const int messageLimitTime = 30;
 
@@ -47,13 +48,13 @@ namespace DudelkaBot.Bot
 
         public void Run()
         {
-            Console.WriteLine("Runing listener...");
+            Debug.WriteLine("Runing listener...");
             State = ListenerState.Loading;
 
             tcp.ConnectAsync(config.Host, config.Port).Wait();
             if (!tcp.Connected)
             {
-                Console.WriteLine("Error connect to {0}:{1}", config.Host, config.Port);
+                Debug.WriteLine("Error connect to {0}:{1}", config.Host, config.Port);
                 State = ListenerState.Error;
                 return;
             }
@@ -69,8 +70,10 @@ namespace DudelkaBot.Bot
             Task.Run((Action)resiveLoop);
             Task.Run((Action)timerLoop);
 
-            initEvent.WaitOne(1500);
-            Console.WriteLine("Listener ready");
+            initEvent.WaitOne();
+            State = ListenerState.Run;
+
+            Debug.WriteLine("Listener ready");
         }
 
         private void resiveLoop()
@@ -100,24 +103,29 @@ namespace DudelkaBot.Bot
             {
                 string user = m.Groups["username"].Value;
                 string channel = m.Groups["channel"].Value;
-                msg = m.Groups["msg"].Value.Trim();
+                msg = m.Groups["msg"].Value;
 
                 //if (user == config.Login)
                 //    return;
 
-                Console.WriteLine("> [{2}][{0}]: {1}", user, msg, channel);
-
-                TwitchBot.Get("channel")?.ResiveMessage(user, msg);
+                TwitchBot.Get(channel)?.ResiveMessage(user, msg);
             }
             else
             {
                 m = systemParser.Match(msg);
                 if (m.Success)
                 {
-                    TwitchBot.Get("channel")?.ResiveSystemMessage(msg);
+                    msg = m.Groups["msg"].Value;
+
+                    Debug.WriteLine(string.Format("> IRC: {0}", msg));
+
+                    if (msg == "Your host is tmi.twitch.tv")
+                        initEvent.Set();
+                    else if (msg.StartsWith("JOIN"))
+                        TwitchBot.Get(msg.Split('#')[1])?.ConfirmJoin();
                 }
                 else
-                    Console.WriteLine("Undefine IRC message: {0}", msg);
+                    Debug.WriteLine(string.Format("Undefine IRC message: {0}", msg));
             }
         }
 
