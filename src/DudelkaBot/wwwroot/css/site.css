@@ -1,0 +1,147 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    font-family: "Spiegel-Regular";
+    background-color: #15191d;
+    font-size: 12px;
+    color: #a09b8c;
+    font-family: sans-serif;
+    font-weight: normal;
+    font-size: 12px;
+}
+
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+label {
+    font-weight: normal;
+}
+
+a {
+    color: #cdbe91;
+    text-decoration: none;
+    font-family: "Spiegel-Regular",sans-serif;
+}
+
+a:hover {
+    color: #f0e6d2;
+    text-decoration: underline;
+}
+
+input {
+    color: #f0e6d2;
+    border-radius: 0;
+    border-color: #785a28;
+    border-width: 1px;
+    border-style: solid;
+    background-color: #1e2328;
+    -webkit-box-shadow: 0 0 0 1px rgba(0,0,0,0.25) inset, 0 0 0 1px rgba(0,0,0,0.25);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.25) inset, 0 0 0 1px rgba(0,0,0,0.25);
+    -webkit-transition: border-color 0s;
+    -moz-transition: border-color 0s;
+    -o-transition: border-color 0s;
+    -ms-transition: border-color 0s;
+    transition: border-color 0s;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=../images/hIEfix.png,sizingMethod=crop);
+    -webkit-font-kerning: normal;
+    -webkit-font-feature-settings: "kern" 1;
+    letter-spacing: 0;
+    zoom: 1;
+    font-width: normal !important;
+    font-style: normal !important;
+    font-family: sans-serif;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.428571429;
+}
+
+.center-form {
+    padding-top: 20px;
+    padding-right: 25px;
+    padding-bottom: 20px;
+    padding-left: 25px;
+    position: absolute;
+    background-color: #010a13;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    border: 2px solid transparent;
+    border-color: #463714;
+    border-image: linear-gradient(to top,#614a1f 0,#463714 5px,#463714 100%) 1 stretch;
+}
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.btn {
+    border-radius: 0;
+    text-transform: uppercase;
+    border: 2px solid transparent;
+    -webkit-border-image: -webkit-linear-gradient(bottom, #0d404c 0%, #0596aa 44%, #0596aa 93%, #0ac8b9 100%);
+    -moz-border-image: -moz-linear-gradient(bottom, #0d404c 0%, #0596aa 44%, #0596aa 93%, #0ac8b9 100%);
+    -o-border-image: -o-linear-gradient(bottom, #0d404c 0%, #0596aa 44%, #0596aa 93%, #0ac8b9 100%);
+    border-image: linear-gradient(to top, #0d404c 0%, #0596aa 44%, #0596aa 93%, #0ac8b9 100%);
+    border-image-slice: 1;
+    color: #cdfafa;
+    -webkit-box-shadow: 0 0 1px 1px #010a13, inset 0 0 1px 1px #010a13;
+    box-shadow: 0 0 1px 1px #010a13, inset 0 0 1px 1px #010a13;
+    background: #1e2328;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=../images/hIEfix.png,sizingMethod=crop);
+    -webkit-font-kerning: normal;
+    -webkit-font-feature-settings: "kern" 1;
+    letter-spacing: 0;
+    zoom: 1;
+    font-width: normal !important;
+    font-style: normal !important;
+    font-family: sans-serif;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: 1.3px;
+    font-size: 18px;
+    padding: .4em 1em;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.btn:hover {
+    color: #cdfafa;
+    -webkit-border-image: -webkit-linear-gradient(bottom, #3295c7 0%, #0ac8b9 49%, #cdfafa 100%);
+    -moz-border-image: -moz-linear-gradient(bottom, #3295c7 0%, #0ac8b9 49%, #cdfafa 100%);
+    -o-border-image: -o-linear-gradient(bottom, #3295c7 0%, #0ac8b9 49%, #cdfafa 100%);
+    border-image: linear-gradient(to top, #3295c7 0%, #0ac8b9 49%, #cdfafa 100%);
+    border-image-slice: 1;
+    background-image: -webkit-linear-gradient(bottom, rgba(88,83,66,0.5), rgba(30,35,40,0.5));
+    background-image: -moz-linear-gradient(bottom, rgba(88,83,66,0.5), rgba(30,35,40,0.5));
+    background-image: -o-linear-gradient(bottom, rgba(88,83,66,0.5), rgba(30,35,40,0.5));
+    background-image: -ms-linear-gradient(bottom, rgba(88,83,66,0.5), rgba(30,35,40,0.5));
+    background-image: linear-gradient(to top, rgba(88,83,66,0.5), rgba(30,35,40,0.5));
+}
+
+#bot_status {
+    width: 32px;
+    height: 32px;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+}
+
+.status-Run {
+    background-color: green;
+}
+.status-Stoped {
+    background-color: red;
+}
+.status-Loading {
+    background-color: gold;
+}
+.status-Error {
+    background-color: darkred;
+}
+.status-None {
+    background-color: black;
+}
