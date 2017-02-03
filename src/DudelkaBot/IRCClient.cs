@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DudelkaBot.Bot
+namespace DudelkaBot
 {
     public enum ListenerState
     {
@@ -19,7 +19,7 @@ namespace DudelkaBot.Bot
         Stoped,
     }
 
-    public class Listener
+    public class IRCClient
     {
         private static Regex userParser = new Regex(@"@(?<username>[\w]+).tmi.twitch.tv (?<type>[A-Z]+) #(?<channel>\w+) :\s*(?<msg>.*)");
         private static Regex systemParser = new Regex(@"tmi\.twitch\.tv( \d{3} \w+ :)?\s*(?<msg>.+)");
@@ -29,17 +29,14 @@ namespace DudelkaBot.Bot
         private StreamReader sr;
         private StreamWriter sw;
         private TcpClient tcp;
-        private Config.CTwitch config;
         private bool needStop = false;
         private int messageCount;
         private ManualResetEvent initEvent;
 
         public ListenerState State { get; private set; }
 
-        public Listener(Config.CTwitch config)
+        public IRCClient()
         {
-            this.config = Config.Instance.Twitch;
-
             initEvent = new ManualResetEvent(false);
             tcp = new TcpClient(AddressFamily.InterNetwork);
 
@@ -48,13 +45,13 @@ namespace DudelkaBot.Bot
 
         public void Run()
         {
-            Debug.WriteLine("Runing listener...");
+            Console.WriteLine("Runing IRCClient...");
             State = ListenerState.Loading;
 
-            tcp.ConnectAsync(config.Host, config.Port).Wait();
+            tcp.ConnectAsync(Config.Host, Config.Port).Wait();
             if (!tcp.Connected)
             {
-                Debug.WriteLine("Error connect to {0}:{1}", config.Host, config.Port);
+                Console.WriteLine("Error connect to {0}:{1}", Config.Host, Config.Port);
                 State = ListenerState.Error;
                 return;
             }
@@ -63,8 +60,8 @@ namespace DudelkaBot.Bot
             sr = new StreamReader(stream);
             sw = new StreamWriter(stream);
 
-            sw.WriteLine("PASS oauth:{0}", config.Token);
-            sw.WriteLine("NICK {0}", config.Login);
+            sw.WriteLine("PASS oauth:{0}", Config.Token);
+            sw.WriteLine("NICK {0}", Config.Login);
             sw.Flush();
 
             Task.Run((Action)resiveLoop);
@@ -73,7 +70,7 @@ namespace DudelkaBot.Bot
             initEvent.WaitOne();
             State = ListenerState.Run;
 
-            Debug.WriteLine("Listener ready");
+            Console.WriteLine("Listener ready");
         }
 
         private void resiveLoop()
@@ -108,7 +105,7 @@ namespace DudelkaBot.Bot
                 //if (user == config.Login)
                 //    return;
 
-                TwitchBot.Get(channel)?.ResiveMessage(user, msg);
+                Bot.Get(channel)?.ResiveMessage(user, msg);
             }
             else
             {
@@ -117,15 +114,15 @@ namespace DudelkaBot.Bot
                 {
                     msg = m.Groups["msg"].Value;
 
-                    Debug.WriteLine(string.Format("> IRC: {0}", msg));
+                    Console.WriteLine(string.Format("> IRC: {0}", msg));
 
                     if (msg == "Your host is tmi.twitch.tv")
                         initEvent.Set();
                     else if (msg.StartsWith("JOIN"))
-                        TwitchBot.Get(msg.Split('#')[1])?.ConfirmJoin();
+                        Bot.Get(msg.Split('#')[1])?.ConfirmJoin();
                 }
                 else
-                    Debug.WriteLine(string.Format("Undefine IRC message: {0}", msg));
+                    Console.WriteLine(string.Format("Undefine IRC message: {0}", msg));
             }
         }
 
@@ -153,7 +150,7 @@ namespace DudelkaBot.Bot
 
             string msg = string.Format(format, args);
 
-            sw.WriteLine(":{0}!{0}@{0}.tmi.twitch.tv PRIVMSG #{1} :{2}", config.Login, channel, msg);
+            sw.WriteLine(":{0}!{0}@{0}.tmi.twitch.tv PRIVMSG #{1} :{2}", Config.Login, channel, msg);
             sw.Flush();
 
             messageCount++;

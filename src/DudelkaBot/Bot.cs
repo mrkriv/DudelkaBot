@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using DudelkaBot.Models;
 
-namespace DudelkaBot.Bot
+namespace DudelkaBot
 {
     public enum BotState
     {
@@ -20,29 +20,26 @@ namespace DudelkaBot.Bot
         Stoped,
     }
 
-    public class TwitchBot
+    public class Bot
     {
-        private static Dictionary<string, TwitchBot> instances = new Dictionary<string, TwitchBot>();
-        private static Listener Listener;
-
-        private Config.CTwitch config;
-
+        private static Dictionary<string, Bot> instances = new Dictionary<string, Bot>();
+        private static IRCClient Listener;
+        
         public BotState State { get; private set; }
         public readonly string Channel;
 
-        private TwitchBot(string channel)
+        private Bot(DudelkaContext db, string channel)
         {
             Channel = channel;
-            config = Config.Instance.Twitch;
 
             if (Listener == null)
             {
-                Listener = new Listener(config);
+                Listener = new IRCClient();
                 Listener.Run();
             }
         }
 
-        public static TwitchBot Get(string channel)
+        public static Bot Get(string channel)
         {
             if (instances.ContainsKey(channel))
                 return instances[channel];
@@ -50,26 +47,26 @@ namespace DudelkaBot.Bot
             return null;
         }
 
-        public static void Run(string channel)
+        public static void Run(DudelkaContext db, string channel)
         {
             if (instances.ContainsKey(channel))
                 return;
 
-            var bot = new TwitchBot(channel);
+            var bot = new Bot(db, channel);
             instances.Add(channel, bot);
 
-            Debug.WriteLine(string.Format("Try join to channel '{0}'", channel));
+            Console.WriteLine(string.Format("Try join to channel '{0}'", channel));
             Listener.Print("JOIN #" + channel);
         }
 
         public void ResiveMessage(string user, string msg)
         {
-            Debug.WriteLine(string.Format("> [{2}][{0}]: {1}", user, msg, Channel));
+            Console.WriteLine(string.Format("> [{2}][{0}]: {1}", user, msg, Channel));
 
             if (msg.StartsWith("!"))
             {
-                if (!CommandShell.Eval(this, user, msg.Substring(1, msg.Length - 1)))
-                    Brodcast("Такой команды нет");
+               // if (!CommandShell.Eval(this, user, msg.Substring(1, msg.Length - 1)))
+               //     Brodcast("Такой команды нет");
             }
         }
 
